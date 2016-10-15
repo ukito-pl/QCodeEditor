@@ -21,7 +21,7 @@
 </rules>
 
 <!-- Appendix to the keywords -->
-<!--
+<!-- 
 
 	The keywords have an attribute called 'start' with the value 'true' or 'false'.
 	If start is true, the keyword will only be highlighted if it is the first word
