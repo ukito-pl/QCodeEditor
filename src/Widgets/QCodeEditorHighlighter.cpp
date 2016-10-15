@@ -75,6 +75,15 @@ namespace kgl {
         }
     }
 
+    ///
+    ///  @fn        setHighlighting
+    ///  @author    Nicolas Kogler
+    ///  @date      October 12th, 2016
+    ///
+    void QCodeEditorHighlighter::setHighlighting(int start, int length, const QTextCharFormat &format) {
+        setFormat(start, length, format);
+    }
+
 
     ///
     ///  @fn        highlightBlock
@@ -82,35 +91,8 @@ namespace kgl {
     ///  @date      October 6th, 2016
     ///
     void QCodeEditorHighlighter::highlightBlock(const QString &text) {
-
-        // If there has been a multi-line-rule match in the previous
-        // block, we need to check against its closing regex.
-        if (previousBlockState() != -1) {
-            const QSyntaxRule &rule = m_Rules->at(previousBlockState());
-            const QTextCharFormat format = m_Formats.at(previousBlockState());
-            QRegularExpression regex(rule.closeRegex());
-            QRegularExpressionMatch match = regex.match(text);
-
-            // If now has a match, ends the multi-line regex
-            if (match.hasMatch()) {
-                setFormat(match.capturedStart(), match.capturedLength(), format);
-                setCurrentBlockState(-1);
-
-                if (!rule.id().isEmpty()) {
-                    emit onMatch(rule.id(), match.captured());
-                }
-            } else {
-                // Has no match, highlights the entire line and
-                // forwards the previous state to the next line.
-                setFormat(0, text.length(), format);
-                setCurrentBlockState(previousBlockState());
-            }
-
-            return;
-        }
-
-
         int ruleIndex = 0;
+        setCurrentBlockState(-1);
 
         // Applies highlighting rules
         const QList<QSyntaxRule> &rules = *m_Rules;
@@ -142,18 +124,46 @@ namespace kgl {
                 // Searches for only one match
                 match = regex.match(text);
 
-                 if (match.hasMatch()) {
-                     if (!rule.closeRegex().isEmpty() && currentBlockState() == -1) {
-                        setCurrentBlockState(ruleIndex);
-                     } if (!rule.id().isEmpty()) {
-                         emit onMatch(rule.id(), match.captured());
-                     }
+                if (match.hasMatch()) {
+                    if (!rule.closeRegex().isEmpty() && currentBlockState() == -1) {
+                        // Before setting the multiline trigger, checks if
+                        // the closing sequence is on the same line.
+                        QRegularExpression mulEnd(rule.closeRegex());
+                        if (!mulEnd.match(text).hasMatch())
+                            setCurrentBlockState(ruleIndex);
+                    } if (!rule.id().isEmpty()) {
+                        emit onMatch(rule.id(), match.captured());
+                    }
 
                     setFormat(match.capturedStart(), match.capturedLength(), format);
                 }
             }
 
             ++ruleIndex;
+        }
+
+        // If there has been a multi-line-rule match in the previous
+        // block, we need to check against its closing regex.
+        if (previousBlockState() != -1) {
+            const QSyntaxRule &rule = m_Rules->at(previousBlockState());
+            const QTextCharFormat format = m_Formats.at(previousBlockState());
+            QRegularExpression regex(rule.closeRegex());
+            QRegularExpressionMatch match = regex.match(text);
+
+            // If now has a match, ends the multi-line regex
+            if (match.hasMatch()) {
+                setFormat(match.capturedStart(), match.capturedLength(), format);
+                setCurrentBlockState(-1);
+
+                if (!rule.id().isEmpty()) {
+                    emit onMatch(rule.id(), match.captured());
+                }
+            } else {
+                // Has no match, highlights the entire line and
+                // forwards the previous state to the next line.
+                setFormat(0, text.length(), format);
+                setCurrentBlockState(previousBlockState());
+            }
         }
     }
 }

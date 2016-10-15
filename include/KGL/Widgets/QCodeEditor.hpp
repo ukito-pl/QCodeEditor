@@ -30,6 +30,8 @@
 #include <KGL/KGLConfig.hpp>
 #include <KGL/Design/QSyntaxRule.hpp>
 #include <KGL/Design/QCodeEditorDesign.hpp>
+#include <QAbstractProxyModel>
+#include <QStandardItemModel>
 #include <QPlainTextEdit>
 #include <QCompleter>
 
@@ -97,6 +99,13 @@ namespace kgl {
         ///
         QString textAtLine(quint32 index) const;
 
+        ///
+        ///  @fn      highlighter : const
+        ///  @brief   Retrieves the syntax highlighter for this editor.
+        ///  @returns the sytax highlighter.
+        ///
+        QCodeEditorHighlighter *highlighter() const;
+
 
         ///
         ///  @fn    setRules
@@ -124,6 +133,28 @@ namespace kgl {
         ///  @default The default value is 3.
         ///
         void setCompletionTrigger(qint32 amount);
+
+        ///
+        ///  @fn    setKeywords
+        ///  @brief Specifies the keywords for auto-completion.
+        ///
+        ///  It is not possible to add icons or anything else
+        ///  if only the keywords are specified. The keywords
+        ///  are sorted alphabetically. If you want to add
+        ///  icons or other things to the keywords, you have to
+        ///  specify a custom model through setKeywordModel.
+        ///
+        ///  @param keywords List of keywords
+        ///
+        void setKeywords(const QStringList &keywords);
+
+        ///
+        ///  @fn    setKeywordModel
+        ///  @brief Specifies the auto-complete model directly.
+        ///  @param model QStandardItemModel to use
+        ///
+        void setKeywordModel(QStandardItemModel *model);
+
 
         ///
         ///  @fn    rehighlight

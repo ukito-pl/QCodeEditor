@@ -51,6 +51,9 @@ namespace kgl {
         setFixedWidth(parent->design().popupSize().width());
         setFixedHeight(parent->design().popupSize().height());
         setStyleSheet(m_StyleSheetNormal);
+
+        // Applies several other properties
+        setFont(parent->design().intelliBoxFont());
     }
 
     ///
@@ -69,15 +72,14 @@ namespace kgl {
     ///
     bool QCodeEditorPopup::viewportEvent(QEvent *event) {
         if (event->type() == QEvent::MouseMove) {
-
             // Retrieves the item at the current mouse position
             QMouseEvent *me = static_cast<QMouseEvent *>(event);
             QModelIndex index = indexAt(me->pos());
 
             // Selects the item at the mouse cursor position
             selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
-        } else if (event->type() == QEvent::MouseButtonPress) {
 
+        } else if (event->type() == QEvent::MouseButtonPress) {
             // This is a little hack: There is no 'pressed' pseudo class
             // to style the listview item on mouse-press, therefore we
             // dynamically change the style-sheet.

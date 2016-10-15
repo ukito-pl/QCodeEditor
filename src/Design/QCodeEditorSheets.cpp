@@ -64,6 +64,10 @@ namespace kgl {
         sheet.replace("%focus", design.hasFocusRect() ? "dotted" : "none");
         sheet.replace("%selbrd", QString::number(design.intelliBoxSelectionBorderColor().rgba(), 16));
         sheet.replace("%selback", QString::number(design.intelliBoxSelectionBackColor().rgba(), 16));
+        sheet.replace("%t", QString::number(design.intelliBoxBorder().top()));
+        sheet.replace("%r", QString::number(design.intelliBoxBorder().right()));
+        sheet.replace("%b", QString::number(design.intelliBoxBorder().bottom()));
+        sheet.replace("%l", QString::number(design.intelliBoxBorder().left()));
 
         // Returns the modified sheet; can be applied immediately
         return sheet;
@@ -84,6 +88,10 @@ namespace kgl {
         sheet.replace("%focus", design.hasFocusRect() ? "dotted" : "none");
         sheet.replace("%selbrd", QString::number(design.intelliBoxPressBorderColor().rgba(), 16));
         sheet.replace("%selback", QString::number(design.intelliBoxPressBackColor().rgba(), 16));
+        sheet.replace("%t", QString::number(design.intelliBoxBorder().top()));
+        sheet.replace("%r", QString::number(design.intelliBoxBorder().right()));
+        sheet.replace("%b", QString::number(design.intelliBoxBorder().bottom()));
+        sheet.replace("%l", QString::number(design.intelliBoxBorder().left()));
 
         // Returns the modified sheet; can be applied immediately
         return sheet;

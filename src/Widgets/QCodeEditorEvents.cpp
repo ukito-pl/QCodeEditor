@@ -39,7 +39,6 @@ namespace kgl {
     ///  @date      October 5th, 2016
     ///
     void QCodeEditor::paintEvent(QPaintEvent *event) {
-
         // Paints the text edit and the line column
         QPlainTextEdit::paintEvent(event);
 
@@ -84,6 +83,8 @@ namespace kgl {
     ///  @date      October 5th, 2016
     ///
     void QCodeEditor::keyPressEvent(QKeyEvent *event) {
+        static QChar par(0x2029); // Qt uses paragraph separators
+        static QString tab = QString(" ").repeated(4);
 
         // The code editor should not receive keys
         // while the auto complete menu is open.
@@ -99,6 +100,103 @@ namespace kgl {
             default:
                 break;
             }
+        }
+
+
+        // Adds tabs in front of the selected block(s)
+        if (event->key() == Qt::Key_Tab && !textCursor().selectedText().isEmpty()) {
+            // Retrieves the amount of lines within the selected text
+            QTextCursor cursor = textCursor();
+            QString selected = cursor.selectedText();
+            qint32 amountOfLines = selected.count(par) + 1;
+
+            // Does not do anything if only one line is selected
+            if (amountOfLines == 1) {
+                return;
+            }
+
+            // Selects the start of the current line and retrieves the position
+            int linePos, lineCopy;
+            cursor.setPosition(cursor.selectionStart());
+            cursor.movePosition(QTextCursor::StartOfLine);
+            linePos = lineCopy = cursor.position();
+            cursor.beginEditBlock();
+
+            // Inserts tabs for each selected line
+            for (int i = 0; i < amountOfLines; ++i) {
+                cursor.setPosition(linePos);
+                cursor.insertText(tab);
+                cursor.movePosition(QTextCursor::Down);
+                cursor.movePosition(QTextCursor::StartOfLine);
+                linePos = cursor.position();
+            }
+
+            // Selects all the text
+            cursor.movePosition(QTextCursor::Down);
+            cursor.movePosition(QTextCursor::EndOfLine);
+            cursor.setPosition(lineCopy, QTextCursor::KeepAnchor);
+            cursor.endEditBlock();
+            setTextCursor(cursor);
+            return;
+        }
+
+        // Removes tabs in front of selected block(s)
+        if (event->key() == Qt::Key_Backtab && !textCursor().selectedText().isEmpty()) {
+            // Retrieves the amount of lines within the selected text
+            QTextCursor cursor = textCursor();
+            QString selected = cursor.selectedText();
+            qint32 amountOfLines = selected.count(par) + 1;
+
+            // Does not do anything if only one line is selected
+            if (amountOfLines == 1) {
+                return;
+            }
+
+            // Retrieves the start of the selection
+            int start = 0, line, diff, copy;
+            cursor.setPosition(cursor.selectionStart());
+            cursor.movePosition(QTextCursor::StartOfLine);
+            copy = cursor.position();
+
+            if (selected.at(0).isSpace()) {
+                cursor.movePosition(QTextCursor::NextWord);
+                start = cursor.position();
+            }
+
+            cursor.clearSelection();
+            cursor.beginEditBlock();
+
+            // Removes a tab from each line
+            for (int i = 0; i < amountOfLines; ++i) {
+                cursor.setPosition(start);
+                cursor.movePosition(QTextCursor::StartOfLine);
+                line = cursor.position();
+                cursor.setPosition(start);
+
+                if (start == line) {
+                    continue;   // nothing to remove
+                }
+
+                diff = qMin(4, start - line);
+                for (int i = 0; i < diff; ++i) {
+                    cursor.deletePreviousChar();
+                }
+
+                // Finds position of the first word in the next line
+                cursor.movePosition(QTextCursor::Down);
+                cursor.movePosition(QTextCursor::StartOfLine);
+                cursor.movePosition(QTextCursor::NextWord);
+                cursor.movePosition(QTextCursor::StartOfWord);
+                start = cursor.position();
+            }
+
+            // Selects all the text
+            cursor.movePosition(QTextCursor::Down);
+            cursor.movePosition(QTextCursor::EndOfLine);
+            cursor.setPosition(copy, QTextCursor::KeepAnchor);
+            cursor.endEditBlock();
+            setTextCursor(cursor);
+            return;
         }
 
         // Replaces a tab with four whitespaces
@@ -147,8 +245,7 @@ namespace kgl {
 
         // Filters the keyword list
         QString prefix = cursor.selectedText();
-        m_AutoComplete->setCompletionPrefix(prefix);
-        m_RuleFilter->setFilterRegExp(QString("^") + prefix + ".*$");
+        m_RuleFilter->setFilterRegExp(QRegExp(prefix, Qt::CaseInsensitive));
         m_AutoComplete->popup()->setCurrentIndex(m_AutoComplete->completionModel()->index(0, 0));
 
         // Determines whether any match has been found
@@ -159,7 +256,6 @@ namespace kgl {
 
         // Shows the auto-complete box, if not already
         if (!m_AutoComplete->popup()->isVisible()) {
-
             // Sets the position of the popup menu and shows it
             QRect rect = cursorRect();
             rect.moveTo(rect.x() + lineColumnWidth() - fontMetrics().width(prefix), rect.y()+4);

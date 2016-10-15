@@ -40,6 +40,7 @@ namespace kgl {
           m_LineColumnBackColor(0xffe9e9e9),
           m_LineColumnTextColor(0xff6a9fc6),
           m_LineColumnSeparatorColor(0xffb9b9b9),
+          m_ActiveLineColor(0xfffc9100),
           m_IntelliBoxBackColor(0xfffafafa),
           m_IntelliBoxTextColor(0xff333333),
           m_IntelliBoxBorderColor(0xffb9b9b9),
@@ -48,7 +49,7 @@ namespace kgl {
           m_IntelliBoxPressBackColor(0xff90c8f6),
           m_IntelliBoxPressBorderColor(0xff60b0f9),
           m_EditorBorder(QMargins(0,0,0,0)),
-          m_IntelliBoxBorder(QMargins(0,0,0,0)),
+          m_IntelliBoxBorder(QMargins(1,1,1,1)),
           m_PopupSize(200, 200),
           m_HasLineColumn(true),
           m_ShowFocusRect(false),
@@ -80,6 +81,7 @@ namespace kgl {
           m_LineColumnBackColor(design.lineColumnBackColor()),
           m_LineColumnTextColor(design.lineColumnTextColor()),
           m_LineColumnSeparatorColor(design.lineColumnSeparatorColor()),
+          m_ActiveLineColor(design.activeLineColor()),
           m_IntelliBoxBackColor(design.intelliBoxBackColor()),
           m_IntelliBoxTextColor(design.intelliBoxTextColor()),
           m_IntelliBoxBorderColor(design.intelliBoxBorderColor()),
@@ -157,6 +159,15 @@ namespace kgl {
     ///
     const QColor &QCodeEditorDesign::lineColumnSeparatorColor() const {
         return m_LineColumnSeparatorColor;
+    }
+
+    ///
+    ///  @fn        activeLineColor
+    ///  @author    Nicolas Kogler
+    ///  @date      October 15th, 2016
+    ///
+    const QColor &QCodeEditorDesign::activeLineColor() const {
+        return m_ActiveLineColor;
     }
 
     ///
@@ -347,6 +358,15 @@ namespace kgl {
     ///
     void QCodeEditorDesign::setLineColumnTextColor(const QColor &color) {
         m_LineColumnTextColor = color;
+    }
+
+    ///
+    ///  @fn        setActiveLineColor
+    ///  @author    Nicolas Kogler
+    ///  @date      October 15th, 2016
+    ///
+    void QCodeEditorDesign::setActiveLineColor(const QColor &color) {
+        m_ActiveLineColor = color;
     }
 
     ///

@@ -108,6 +108,13 @@ namespace kgl {
         const QColor &lineColumnTextColor() const;
 
         ///
+        ///  @fn      activeLineColor : const
+        ///  @brief   Retrieves the color of the line number text that is currently active.
+        ///  @returns the active line number text.
+        ///
+        const QColor &activeLineColor() const;
+
+        ///
         ///  @fn      intelliBoxBackColor : const
         ///  @brief   Retrieves the bg color of the intellisense box.
         ///  @returns the bg color of the intellisense box.
@@ -263,6 +270,13 @@ namespace kgl {
         void setLineColumnTextColor(const QColor &color);
 
         ///
+        ///  @fn    setActiveLineColor
+        ///  @brief Specifies the active line color
+        ///  @param color Color to draw active line text in
+        ///
+        void setActiveLineColor(const QColor &color);
+
+        ///
         ///  @fn    setIntelliBoxBackColor
         ///  @brief Specifies the bg color of the intelliBox.
         ///  @param color Color to use as background
@@ -368,9 +382,9 @@ namespace kgl {
         void showFocusRect(bool show);
 
         ///
-        ///  @fn     setFirstLineOne
-        ///  @brief  Specifies whether to set the first line as one and not zero.
-        ///  @param  one True if line numbers should start with 1.
+        ///  @fn    setFirstLineOne
+        ///  @brief Specifies whether to set the first line as one and not zero.
+        ///  @param one True if line numbers should start with 1.
         ///
         void setFirstLineAsOne(bool one);
 
@@ -386,6 +400,7 @@ namespace kgl {
         QColor m_LineColumnBackColor;
         QColor m_LineColumnTextColor;
         QColor m_LineColumnSeparatorColor;
+        QColor m_ActiveLineColor;
         QColor m_IntelliBoxBackColor;
         QColor m_IntelliBoxTextColor;
         QColor m_IntelliBoxBorderColor;

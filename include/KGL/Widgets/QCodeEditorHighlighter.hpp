@@ -75,6 +75,15 @@ namespace kgl {
         ///
         void updateFormats();
 
+        ///
+        ///  @fn    setHighlighting
+        ///  @brief Applies some visual styling to text in the current line.
+        ///  @param start Start index to apply styling to
+        ///  @param length Length of the text to style
+        ///  @param format Format to apply
+        ///
+        void setHighlighting(int start, int length, const QTextCharFormat &format);
+
 
     signals:
 
@@ -90,6 +99,12 @@ namespace kgl {
         ///
         void onMatch(const QString &id, QString sequence);
 
+        ///
+        ///  @fn    onHighlight : signal
+        ///  @brief Will fire if highlighting was applied to a line.
+        ///  @param lineText Plain text in the current line
+        ///
+        void onHighlight(const QString &lineText);
 
 
     protected:

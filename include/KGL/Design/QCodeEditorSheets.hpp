@@ -58,7 +58,10 @@ namespace kgl {
     ///
     const char CSS_Popup_Widget[] = {
         "QListView {"
-        "   border: 1px solid #%border;"
+        "   border-top: %tpx solid #%border;"
+        "   border-left: %lpx solid #%border;"
+        "   border-right: %rpx solid #%border;"
+        "   border-bottom: %bpx solid #%border;"
         "   background-color: #%back;"
         "   color: #%text;"
         "   outline: %focus;"

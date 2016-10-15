@@ -46,7 +46,6 @@ namespace kgl {
     ///  @date      October 5th, 2016
     ///
     void QCodeEditor::scrollLineColumn(QRect view, int scroll) {
-
         // Scrolls the line widget to the current scrollbar value
         if (m_Design.isLineColumnVisible()) {
             if (scroll != 0) {
@@ -68,16 +67,14 @@ namespace kgl {
     ///  @date      October 5th, 2016
     ///
     void QCodeEditor::completeWord(const QString &word) {
-
-        // Calculates the amount of missing characters to complete the word
         QTextCursor caretPos = textCursor();
-        qint32 amountToComplete = word.length() -
-                m_AutoComplete->completionPrefix().length();
 
         // Inserts the missing characters at the current pos
         caretPos.movePosition(QTextCursor::Left);
-        caretPos.movePosition(QTextCursor::EndOfWord);
-        caretPos.insertText(word.right(amountToComplete));
+        caretPos.movePosition(QTextCursor::StartOfWord);
+        caretPos.select(QTextCursor::WordUnderCursor);
+        caretPos.removeSelectedText();
+        caretPos.insertText(word);
         setTextCursor(caretPos);
     }
 }

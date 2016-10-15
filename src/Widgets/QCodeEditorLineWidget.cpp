@@ -87,6 +87,7 @@ namespace kgl {
 
         // Retrieves the visible line numbers
         QTextBlock firstLine = m_Parent->firstVisibleBlock();
+        qint32 bnActive = m_Parent->textCursor().blockNumber() + ((design.startsWithOne()) ? 1 : 0);
         qint32 blockNumber = firstLine.blockNumber() + ((design.startsWithOne()) ? 1 : 0);
         qint32 blockTop = static_cast<int>(m_Parent->blockBoundingGeometry(firstLine)
                                             .translated(m_Parent->contentOffset())
@@ -98,8 +99,15 @@ namespace kgl {
         // Paints all visible line numbers
         while (firstLine.isValid() && blockTop <= content.bottom()) {
             if (firstLine.isVisible() && blockBottom >= content.top()) {
-                painter.drawText(0, blockTop, width(), fontMetrics().height(),
-                    Qt::AlignCenter, QString::number(blockNumber));
+                if (blockNumber == bnActive) {
+                    painter.setPen(design.activeLineColor());
+                    painter.drawText(0, blockTop, width(), fontMetrics().height(),
+                        Qt::AlignCenter, QString::number(blockNumber));
+                    painter.setPen(design.lineColumnTextColor());
+                } else {
+                    painter.drawText(0, blockTop, width(), fontMetrics().height(),
+                        Qt::AlignCenter, QString::number(blockNumber));
+                }
             }
 
             // Jumps to the next line

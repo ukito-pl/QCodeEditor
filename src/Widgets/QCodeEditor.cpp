@@ -44,7 +44,8 @@ namespace kgl {
           m_Popup(NULL),
           m_Highlighter(NULL),
           m_RuleFilter(NULL),
-          m_AutoComplete(NULL) {
+          m_AutoComplete(NULL),
+          m_CompletionTrigger(3) {
 
         // Changes miscellaneous properties
         setAutoFillBackground(true);
@@ -67,12 +68,12 @@ namespace kgl {
         m_AutoComplete = new QCompleter;
         m_AutoComplete->setWidget(this);
         m_AutoComplete->setCompletionMode(QCompleter::PopupCompletion);
-        m_AutoComplete->setModelSorting(QCompleter::CaseSensitivelySortedModel);
+        m_AutoComplete->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         m_AutoComplete->setPopup(m_Popup);
 
         // Constructs the sorting proxy model
         m_RuleFilter = new QSortFilterProxyModel;
-        m_RuleFilter->setFilterCaseSensitivity(Qt::CaseSensitive);
+        m_RuleFilter->setFilterCaseSensitivity(Qt::CaseInsensitive);
         m_RuleFilter->setDynamicSortFilter(false);
 
 
@@ -136,6 +137,15 @@ namespace kgl {
         return document()->findBlockByLineNumber(index).text();
     }
 
+    ///
+    ///  @fn        highlighter
+    ///  @author    Nicolas Kogler
+    ///  @date      October 15th, 2016
+    ///
+    QCodeEditorHighlighter *QCodeEditor::highlighter() const {
+        return m_Highlighter;
+    }
+
 
     ///
     ///  @fn        setRules
@@ -176,6 +186,39 @@ namespace kgl {
     }
 
     ///
+    ///  @fn        setKeywords
+    ///  @author    Nicolas Kogler
+    ///  @date      October 9th, 2016
+    ///
+    void QCodeEditor::setKeywords(const QStringList &keywords) {
+        QStandardItemModel *model = new QStandardItemModel;
+        qint32 size = keywords.size();
+
+        // Constructs the model from the keywords
+        for (int i = 0; i < size; ++i) {
+            QStandardItem *item = new QStandardItem;
+            item->setText(keywords.at(i));
+            model->appendRow(item);
+        }
+
+        // Changes the auto complete menu model
+        m_RuleFilter->setSourceModel(model);
+        m_RuleFilter->sort(0);
+        m_AutoComplete->setModel(m_RuleFilter);
+    }
+
+    ///
+    ///  @fn        setKeywordModel
+    ///  @author    Nicolas Kogler
+    ///  @date      October 9th, 2016
+    ///
+    void QCodeEditor::setKeywordModel(QStandardItemModel *model) {
+        m_RuleFilter->setSourceModel(model);
+        m_AutoComplete->setModel(m_RuleFilter);
+    }
+
+
+    ///
     ///  @fn        rehighlight
     ///  @author    Nicolas Kogler
     ///  @date      October 5th, 2016
@@ -190,7 +233,6 @@ namespace kgl {
     ///  @date      October 5th, 2016
     ///
     int QCodeEditor::lineColumnWidth() const {
-
         // Gets the amount of lines
         int minDigits = 1;
         int maxDigits = qMax(minDigits, document()->blockCount());
