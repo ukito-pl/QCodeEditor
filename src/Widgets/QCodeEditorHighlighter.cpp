@@ -67,9 +67,12 @@ namespace kgl {
                 format.setFont(rule.font());
             } else {
                 format.setFont(m_Parent->font());
+            } if (rule.foreColor().alpha() == 0) {
+                format.setForeground(QBrush(m_Parent->design().editorTextColor()));
+            } else {
+                format.setForeground(rule.foreColor());
             }
 
-            format.setForeground(QBrush(rule.foreColor()));
             format.setBackground(QBrush(rule.backColor()));
             m_Formats.push_back(format);
         }

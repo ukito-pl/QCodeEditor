@@ -174,6 +174,7 @@ namespace kgl {
 
         // Modifies the border through a style-sheet
         setStyleSheet(QCodeEditorSheets::border(design));
+        m_Highlighter->updateFormats();
     }
 
     ///
