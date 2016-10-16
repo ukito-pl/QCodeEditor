@@ -244,7 +244,7 @@ namespace kgl {
         }
 
         // Filters the keyword list
-        QString prefix = cursor.selectedText();
+        QString prefix = QString("^") + cursor.selectedText();
         m_RuleFilter->setFilterRegExp(QRegExp(prefix, Qt::CaseInsensitive));
         m_AutoComplete->popup()->setCurrentIndex(m_AutoComplete->completionModel()->index(0, 0));
 
