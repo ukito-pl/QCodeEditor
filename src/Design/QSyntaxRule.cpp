@@ -24,6 +24,7 @@
 //  Included headers
 //
 #include <KGL/Design/QSyntaxRule.hpp>
+#include <KGL/Design/XmlHelper.hpp>
 #include <QtXml/QtXml>
 #include <QFont>
 
@@ -255,73 +256,6 @@ namespace kgl {
 
 
     ///
-    ///  @fn        readBool
-    ///  @author    Nicolas Kogler
-    ///  @date      October 7th, 2016
-    ///
-    inline bool readBool(QXmlStreamReader *reader) {
-        auto string = reader->readElementText();
-        if (string.isEmpty() ||
-            string != "true") {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    ///
-    ///  @fn        readColor
-    ///  @author    Nicolas Kogler
-    ///  @date      October 7th, 2016
-    ///
-    inline QColor readColor(QXmlStreamReader *reader) {
-        auto string = reader->readElementText();
-        if (string.isEmpty()) {
-            return QColor(Qt::transparent);
-        }
-
-        // Attempts to replace a hashtag with '0x'
-        if (string.startsWith('#')) {
-            string.remove(0, 1);
-            string.insert(0, "0x");
-        }
-
-        // Tries to convert it to a number;
-        // if it failed, is a color name
-        bool success = false;
-        quint32 rgba = string.toUInt(&success, 16);
-        if (success == true) {
-            return QColor(rgba);
-        } else {
-            if (QColor::isValidColor(string)) {
-                return QColor(string);
-            } else {
-                return QColor(Qt::transparent);
-            }
-        }
-    }
-
-    ///
-    ///  @fn        readKeywords
-    ///  @author    Nicolas Kogler
-    ///  @date      October 7th, 2016
-    ///
-    inline QStringList readKeywords(QXmlStreamReader *reader) {
-
-        // Simplified fits our needs: Removes trailing and leading space
-        // and converts multiple spaces to a single space. We have multiple
-        // spaces as: "\n     " -> results in "\n ".
-        QString string = reader->readElementText().simplified();
-
-        // Now we just have to remove all the newlines
-        string.remove("\n");
-
-        // A single whitespace is our separator for the keywords,
-        // thus split the string up accordingly.
-        return string.split(' '); // safe to not include empty parts
-    }
-
-    ///
     ///  @fn        loadFromFile
     ///  @author    Nicolas Kogler
     ///  @date      October 7th, 2016
@@ -378,12 +312,12 @@ namespace kgl {
                 if (xmlReader.isComment()) break;
 
                 // Attempts to parse the rule
-                auto name = xmlReader.name();
+                auto name = xmlReader.name().toString().toLower();
                 if (name == "regex") {
                     rule.setRegex(xmlReader.readElementText());
-                } else if (name == "startRegex") {
+                } else if (name == "startregex") {
                     rule.setStartRegex(xmlReader.readElementText());
-                } else if (name == "closeRegex") {
+                } else if (name == "closeregex") {
                     rule.setCloseRegex(xmlReader.readElementText());
                 } else if (name == "keywords") {
 
@@ -402,33 +336,10 @@ namespace kgl {
                 } else if (name == "forecolor") {
                     rule.setForeColor(readColor(&xmlReader));
                 } else if (name == "font") {
-                    if (xmlReader.readNextStartElement()) {
-
-                        // Determines whether default font should be used
-                        QFont usedFont;
-                        if (xmlReader.name() == "family") {
-                            usedFont = QFont(xmlReader.readElementText());
-                            usedFont.setStyleHint(QFont::TypeWriter);
-                        } else {
-                            usedFont = design.editorFont();
-                        }
-
-                        // Reads the font properties
-                        while (!(xmlReader.isEndElement() && xmlReader.name() == "font")) {
-                            auto prop = xmlReader.name();
-                            if (prop == "strikethrough") {
-                                usedFont.setStrikeOut(readBool(&xmlReader));
-                            } else if (prop == "underline") {
-                                usedFont.setUnderline(readBool(&xmlReader));
-                            } else if (prop == "italic") {
-                                usedFont.setItalic(readBool(&xmlReader));
-                            } else if (prop == "bold") {
-                                usedFont.setBold(readBool(&xmlReader));
-                            } xmlReader.skipCurrentElement();
-                        }
-
-                        rule.setFont(usedFont);
-                    }
+                    rule.setFont(readFont(&xmlReader, design.editorFont()));
+                } else {
+                    QString s("kgl::QSyntaxRule: Element '%0' is unknown.");
+                    qDebug(s.arg(name).toStdString().c_str());
                 }
             }
 

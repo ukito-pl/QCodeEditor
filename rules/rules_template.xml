@@ -7,6 +7,7 @@
         <forecolor></forecolor>                     <!-- Format: #hex - Is editor's default if not specified -->
         <font>                                      <!-- Is editor's default if not specified -->
                 <family></family>                   <!-- If not existing, will be editor's default -->
+                <pointsize></pointsize>             <!-- If not existing, will be editor's default -->
                 <strikethrough></strikethrough>     <!-- true/false - false by default -->
                 <underline></underline>             <!-- true/false - false by default -->
                 <italic></italic>                   <!-- true/false - false by default -->

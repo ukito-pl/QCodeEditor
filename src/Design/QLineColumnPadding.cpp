@@ -39,6 +39,17 @@ namespace kgl {
     }
 
     ///
+    ///  @fn        Default constructor
+    ///  @author    Nicolas Kogler
+    ///  @date      October 19th, 2016
+    ///
+    QLineColumnPadding::QLineColumnPadding(const QSize &size)
+        : m_Left(static_cast<quint32>(size.width())),
+          m_Right(static_cast<quint32>(size.height())) {
+
+    }
+
+    ///
     ///  @fn        Constructor
     ///  @author    Nicolas Kogler
     ///  @date      October 5th, 2016

@@ -50,6 +50,13 @@ namespace kgl {
 
         ///
         ///  @fn    Constructor
+        ///  @brief Constructs a padding out of a QSize.
+        ///  @param size Size representing left and right padding
+        ///
+        QLineColumnPadding(const QSize &size);
+
+        ///
+        ///  @fn    Constructor
         ///  @brief Initializes a new instance of QLineColumnPadding.
         ///  @param left Initial left padding
         ///  @param right Initial right padding

@@ -24,6 +24,8 @@
 //  Included headers
 //
 #include <KGL/Design/QCodeEditorDesign.hpp>
+#include <KGL/Design/XmlHelper.hpp>
+#include <qrgb.h>
 
 
 namespace kgl {
@@ -96,6 +98,92 @@ namespace kgl {
           m_PopupSize(design.popupSize()),
           m_HasLineColumn(design.isLineColumnVisible()),
           m_ShowFocusRect(design.hasFocusRect()) {
+    }
+
+    ///
+    ///  @fn        Constructor
+    ///  @author    Nicolas Kogler
+    ///  @date      October 18th, 2016
+    ///
+    QCodeEditorDesign::QCodeEditorDesign(const QString &path)
+        : QCodeEditorDesign() {
+        QFile file(path);
+
+        // Determines whether file can be opened
+        if (!file.open(QIODevice::ReadOnly)) {
+            qDebug("kgl::QCodeEditorDesign: Cannot open XML file.");
+            return;
+        }
+
+        // Attempts to read top element
+        QXmlStreamReader xmlReader(&file);
+        if (!xmlReader.readNextStartElement() && xmlReader.name() != "design") {
+            qDebug("kgl::QCodeEditorDesign: Top tag is not <design>.");
+            return;
+        }
+
+
+        while (!xmlReader.hasError() && !xmlReader.atEnd()) {
+            if (!xmlReader.readNextStartElement()) {
+                continue;
+            }
+
+            QString name = xmlReader.name().toString().toLower();
+
+            // Order and case of elements does not matter
+            if (name == "editorbackcolor") {
+                m_EditorBackColor = readColor(&xmlReader);
+            } else if (name == "editortextcolor") {
+                m_EditorTextColor = readColor(&xmlReader);
+            } else if (name == "editorbordercolor") {
+                m_EditorBorderColor = readColor(&xmlReader);
+            } else if (name == "linecolumnbackcolor") {
+                m_LineColumnBackColor = readColor(&xmlReader);
+            } else if (name == "linecolumntextcolor") {
+                m_LineColumnTextColor = readColor(&xmlReader);
+            } else if (name == "linecolumnseparatorcolor") {
+                m_LineColumnSeparatorColor = readColor(&xmlReader);
+            } else if (name == "activelinecolor") {
+                m_ActiveLineColor = readColor(&xmlReader);
+            } else if (name == "intelliboxbackcolor") {
+                m_IntelliBoxBackColor = readColor(&xmlReader);
+            } else if (name == "intelliboxtextcolor") {
+                m_IntelliBoxTextColor = readColor(&xmlReader);
+            } else if (name == "intelliboxbordercolor") {
+                m_IntelliBoxBorderColor = readColor(&xmlReader);
+            } else if (name == "intelliboxselectionbackcolor") {
+                m_IntelliBoxSelectionBackColor = readColor(&xmlReader);
+            } else if (name == "intelliboxselectionbordercolor") {
+                m_IntelliBoxSelectionBorderColor = readColor(&xmlReader);
+            } else if (name == "intelliboxpressbackcolor") {
+                m_IntelliBoxPressBackColor = readColor(&xmlReader);
+            } else if (name == "intelliboxpressbordercolor") {
+                m_IntelliBoxPressBorderColor = readColor(&xmlReader);
+            } else if (name == "editorborder") {
+                m_EditorBorder = readMargin(&xmlReader);
+            } else if (name == "intelliboxborder") {
+                m_IntelliBoxBorder = readMargin(&xmlReader);
+            } else if (name == "linecolumnpadding") {
+                m_LineColumnPadding = QLineColumnPadding(readSize(&xmlReader));
+            } else if (name == "popupsize") {
+                m_PopupSize = readSize(&xmlReader);
+            } else if (name == "haslinecolumn") {
+                m_HasLineColumn = readBool(&xmlReader);
+            } else if (name == "showfocusrect") {
+                m_ShowFocusRect = readBool(&xmlReader);
+            } else if (name == "firstlineone") {
+                m_FirstLineOne = readBool(&xmlReader);
+            } else if (name == "editorfont") {
+                m_EditorFont = readFont(&xmlReader, QFont("Monospace"));
+            } else if (name == "intelliboxfont") {
+                m_IntelliBoxFont = readFont(&xmlReader, QFont("Monospace"));
+            } else {
+                QString s("kgl::QCodeEditorDesign: Element '%0' is unknown.");
+                qDebug(s.arg(name).toStdString().c_str());
+            }
+        }
+
+        file.close();
     }
 
     ///

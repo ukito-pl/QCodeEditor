@@ -52,6 +52,13 @@ namespace kgl {
         QCodeEditorDesign();
 
         ///
+        ///  @fn    Constructor
+        ///  @brief Loads a code editor design from a file.
+        ///  @param path Path to the XML design file
+        ///
+        QCodeEditorDesign(const QString &path);
+
+        ///
         ///  @fn    Copy constructor
         ///  @brief Copies one QCodeEditorDesign to another.
         ///  @param design Other design
