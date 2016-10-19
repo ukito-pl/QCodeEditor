@@ -43,6 +43,7 @@ namespace kgl {
         : QPlainTextEdit(parent),
           m_Popup(NULL),
           m_Highlighter(NULL),
+          m_SourceModel(NULL),
           m_RuleFilter(NULL),
           m_AutoComplete(NULL),
           m_CompletionTrigger(3) {
@@ -70,6 +71,9 @@ namespace kgl {
         m_AutoComplete->setCompletionMode(QCompleter::PopupCompletion);
         m_AutoComplete->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         m_AutoComplete->setPopup(m_Popup);
+
+        // Constructs the source model
+        m_SourceModel = new QStandardItemModel;
 
         // Constructs the sorting proxy model
         m_RuleFilter = new QSortFilterProxyModel;
@@ -192,18 +196,17 @@ namespace kgl {
     ///  @date      October 9th, 2016
     ///
     void QCodeEditor::setKeywords(const QStringList &keywords) {
-        QStandardItemModel *model = new QStandardItemModel;
         qint32 size = keywords.size();
 
         // Constructs the model from the keywords
         for (int i = 0; i < size; ++i) {
             QStandardItem *item = new QStandardItem;
             item->setText(keywords.at(i));
-            model->appendRow(item);
+            m_SourceModel->appendRow(item);
         }
 
         // Changes the auto complete menu model
-        m_RuleFilter->setSourceModel(model);
+        m_RuleFilter->setSourceModel(m_SourceModel);
         m_RuleFilter->sort(0);
         m_AutoComplete->setModel(m_RuleFilter);
     }
@@ -216,6 +219,41 @@ namespace kgl {
     void QCodeEditor::setKeywordModel(QStandardItemModel *model) {
         m_RuleFilter->setSourceModel(model);
         m_AutoComplete->setModel(m_RuleFilter);
+    }
+
+    ///
+    ///  @fn        addKeyword
+    ///  @author    Nicolas Kogler
+    ///  @date      October 19th, 2016
+    ///
+    void QCodeEditor::addKeyword(const QString &keyword) {
+        if (!keywordExists(keyword)) {
+            QStandardItem *item = new QStandardItem;
+            item->setText(keyword);
+            m_SourceModel->appendRow(item);
+            m_RuleFilter->sort(0);
+        }
+    }
+
+    ///
+    ///  @fn        removeKeyword
+    ///  @author    Nicolas Kogler
+    ///  @date      October 19th, 2016
+    ///
+    void QCodeEditor::removeKeyword(const QString &keyword) {
+        QList<QStandardItem *> m = m_SourceModel->findItems(keyword);
+        if (m.size() == 1) {
+            m_SourceModel->removeRow(m.at(0)->row());
+        }
+    }
+
+    ///
+    ///  @fn        keywordExists
+    ///  @author    Nicolas Kogler
+    ///  @date      October 19th, 2016
+    ///
+    bool QCodeEditor::keywordExists(const QString &keyword) {
+        return !m_SourceModel->findItems(keyword).isEmpty();
     }
 
 
