@@ -155,6 +155,30 @@ namespace kgl {
         ///
         void setKeywordModel(QStandardItemModel *model);
 
+        ///
+        ///  @fn    addKeyword
+        ///  @brief Adds a keyword to the existing model.
+        ///  @param keyword New auto-complete keyword.
+        ///  @note  If you specified a custom model, append
+        ///         the keyword on your own and it will be
+        ///         immediately visible to the intelliBox.
+        ///
+        void addKeyword(const QString &keyword);
+
+        ///
+        ///  @fn    removeKeyword
+        ///  @brief Removes a keyword from the existing model.
+        ///  @param keyword Keyword to remove from the list
+        ///
+        void removeKeyword(const QString &keyword);
+
+        ///
+        ///  @fn      keywordsExist
+        ///  @brief   Determines whether the given keyword exists.
+        ///  @param   keyword Keyword to check
+        ///  @returns true if the keyword exísts.
+        ///
+        bool keywordExists(const QString &keyword);
 
         ///
         ///  @fn    rehighlight
@@ -269,6 +293,7 @@ namespace kgl {
         QCodeEditorLineWidget *m_LineWidget;    ///< Line column widget
         QCodeEditorPopup *m_Popup;              ///< Intellisense popup widget
         QCodeEditorHighlighter *m_Highlighter;  ///< The syntax highlighter
+        QStandardItemModel *m_SourceModel;      ///< Source model for the rule filter
         QSortFilterProxyModel *m_RuleFilter;    ///< Filters all the keywords, funcs, ...
         QCompleter *m_AutoComplete;             ///< Auto completion widget
         qint32 m_CompletionTrigger;             ///< Amount of characters till AC trigger
