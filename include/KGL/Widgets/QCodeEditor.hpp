@@ -245,6 +245,17 @@ namespace kgl {
         void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 
+    signals:
+
+        ///
+        ///  @fn    lineChanged
+        ///  @brief Is emitted when a line's text changed.
+        ///  @param line Line that was changed
+        ///  @param contents Contents of the line
+        ///
+        void lineChanged(qint32 line, QString contents);
+
+
     private slots:
 
         ///
@@ -282,6 +293,11 @@ namespace kgl {
         ///
         void completeWord(const QString &word);
 
+        ///
+        ///  @fn    textChanged : slot
+        ///  @brief Emits a line-changed event when appropriate
+        ///
+        void textChanged();
 
     private:
 

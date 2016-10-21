@@ -26,6 +26,7 @@
 #include <KGL/Widgets/QCodeEditor.hpp>
 #include <KGL/Widgets/QCodeEditorLineWidget.hpp>
 #include <QCompleter>
+#include <QTextBlock>
 
 
 namespace kgl {
@@ -76,5 +77,14 @@ namespace kgl {
         caretPos.removeSelectedText();
         caretPos.insertText(word);
         setTextCursor(caretPos);
+    }
+
+    ///
+    ///  @fn        textChanged
+    ///  @author    Nicolas Kogler
+    ///  @date      October 20th, 2016
+    ///
+    void QCodeEditor::textChanged() {
+        emit lineChanged(textCursor().blockNumber(), textCursor().block().text());
     }
 }

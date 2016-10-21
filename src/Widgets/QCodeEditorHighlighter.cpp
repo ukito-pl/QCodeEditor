@@ -119,7 +119,7 @@ namespace kgl {
                     setFormat(match.capturedStart(), match.capturedLength(), format);
 
                     if (!rule.id().isEmpty()) {
-                        emit onMatch(rule.id(), match.captured());
+                        emit onMatch(rule.id(), match.captured(), currentBlock().blockNumber());
                     }
                 }
             } else {
@@ -135,7 +135,7 @@ namespace kgl {
                         if (!mulEnd.match(text).hasMatch())
                             setCurrentBlockState(ruleIndex);
                     } if (!rule.id().isEmpty()) {
-                        emit onMatch(rule.id(), match.captured());
+                        emit onMatch(rule.id(), match.captured(), currentBlock().blockNumber());
                     }
 
                     setFormat(match.capturedStart(), match.capturedLength(), format);
@@ -159,7 +159,7 @@ namespace kgl {
                 setCurrentBlockState(-1);
 
                 if (!rule.id().isEmpty()) {
-                    emit onMatch(rule.id(), match.captured());
+                    emit onMatch(rule.id(), match.captured(), currentBlock().blockNumber());
                 }
             } else {
                 // Has no match, highlights the entire line and

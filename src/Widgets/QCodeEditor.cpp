@@ -90,12 +90,12 @@ namespace kgl {
         connect(m_AutoComplete, SIGNAL(activated(QString)), this, SLOT(completeWord(QString)));
         connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(scrollLineColumn(QRect,int)));
         connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineColumn(int)));
+        connect(this, SIGNAL(textChanged()), this, SLOT(textChanged()));
     }
 
     ///
     ///  @fn        Destructor
     ///  @author    Nicolas Kogler
-    ///  @date      October 5th, 2016
     ///
     QCodeEditor::~QCodeEditor() {
         delete m_Highlighter;

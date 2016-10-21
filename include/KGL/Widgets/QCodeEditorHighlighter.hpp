@@ -96,15 +96,9 @@ namespace kgl {
         ///
         ///  @param id The identifier of the sent match
         ///  @param sequence The matched sequence
+        ///  @param line Zero-based number of line
         ///
-        void onMatch(const QString &id, QString sequence);
-
-        ///
-        ///  @fn    onHighlight : signal
-        ///  @brief Will fire if highlighting was applied to a line.
-        ///  @param lineText Plain text in the current line
-        ///
-        void onHighlight(const QString &lineText);
+        void onMatch(const QString &id, QString sequence, qint32 line);
 
 
     protected:
