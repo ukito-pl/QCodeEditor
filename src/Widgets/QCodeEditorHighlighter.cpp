@@ -25,6 +25,7 @@
 //
 #include <KGL/Widgets/QCodeEditorHighlighter.hpp>
 #include <KGL/Widgets/QCodeEditor.hpp>
+#include <QUuid>
 
 
 namespace kgl {
@@ -94,6 +95,14 @@ namespace kgl {
     ///  @date      October 6th, 2016
     ///
     void QCodeEditorHighlighter::highlightBlock(const QString &text) {
+        if (currentBlockUserData() != NULL) {
+            auto d = static_cast<QCodeEditorBlockData *>(currentBlockUserData());
+            QRegularExpression regex(d->re);
+            if (!regex.match(text).hasMatch()) {
+                onRemove(d);
+            }
+        }
+
         int ruleIndex = 0;
         setCurrentBlockState(-1);
 
@@ -117,9 +126,20 @@ namespace kgl {
                 while (iter.hasNext()) {
                     match = iter.next();
                     setFormat(match.capturedStart(), match.capturedLength(), format);
-
                     if (!rule.id().isEmpty()) {
-                        emit onMatch(rule.id(), match.captured(), currentBlock().blockNumber());
+                        if (currentBlockUserData() == NULL) {
+                            setCurrentBlockUserData(new QCodeEditorBlockData(rule.regex()));
+                            emit onMatch(rule, match.captured(), currentBlock());
+                        } else {
+                            auto d = static_cast<QCodeEditorBlockData *>(currentBlockUserData());
+                            if (d->re == rule.regex()) {
+                                // Already containing a match that has the exact regex:
+                                // Remove it first, then add it again
+                                emit onRemove(d);
+                                setCurrentBlockUserData(new QCodeEditorBlockData(rule.regex()));
+                                emit onMatch(rule, match.captured(), currentBlock());
+                            }
+                        }
                     }
                 }
             } else {
@@ -135,7 +155,19 @@ namespace kgl {
                         if (!mulEnd.match(text).hasMatch())
                             setCurrentBlockState(ruleIndex);
                     } if (!rule.id().isEmpty()) {
-                        emit onMatch(rule.id(), match.captured(), currentBlock().blockNumber());
+                        if (currentBlockUserData() == NULL) {
+                            setCurrentBlockUserData(new QCodeEditorBlockData(rule.regex()));
+                            emit onMatch(rule, match.captured(), currentBlock());
+                        } else {
+                            auto d = static_cast<QCodeEditorBlockData *>(currentBlockUserData());
+                            if (d->re == rule.regex()) {
+                                // Already containing a match that has the exact regex:
+                                // Remove it first, then add it again
+                                emit onRemove(d);
+                                setCurrentBlockUserData(new QCodeEditorBlockData(rule.regex()));
+                                emit onMatch(rule, match.captured(), currentBlock());
+                            }
+                        }
                     }
 
                     setFormat(match.capturedStart(), match.capturedLength(), format);
@@ -159,7 +191,19 @@ namespace kgl {
                 setCurrentBlockState(-1);
 
                 if (!rule.id().isEmpty()) {
-                    emit onMatch(rule.id(), match.captured(), currentBlock().blockNumber());
+                    if (currentBlockUserData() == NULL) {
+                        setCurrentBlockUserData(new QCodeEditorBlockData(rule.regex()));
+                        emit onMatch(rule, match.captured(), currentBlock());
+                    } else {
+                        auto d = static_cast<QCodeEditorBlockData *>(currentBlockUserData());
+                        if (d->re == rule.regex()) {
+                            // Already containing a match that has the exact regex:
+                            // Remove it first, then add it again
+                            emit onRemove(d);
+                            setCurrentBlockUserData(new QCodeEditorBlockData(rule.regex()));
+                            emit onMatch(rule, match.captured(), currentBlock());
+                        }
+                    }
                 }
             } else {
                 // Has no match, highlights the entire line and
@@ -168,5 +212,15 @@ namespace kgl {
                 setCurrentBlockState(previousBlockState());
             }
         }
+
+
+        // Provides custom highlighting logic
+        emit onHighlight(this);
     }
+
+
+    ///
+    ///  @brief Defines the global uuid list
+    ///
+    QList<QUuid> QCodeEditorBlockData::p;
 }

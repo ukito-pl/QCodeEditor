@@ -34,6 +34,7 @@
 #include <QStandardItemModel>
 #include <QPlainTextEdit>
 #include <QCompleter>
+#include <QTextBlock>
 
 
 namespace kgl {
@@ -250,10 +251,9 @@ namespace kgl {
         ///
         ///  @fn    lineChanged
         ///  @brief Is emitted when a line's text changed.
-        ///  @param line Line that was changed
-        ///  @param contents Contents of the line
+        ///  @param block Block (line) that was changed
         ///
-        void lineChanged(qint32 line, QString contents);
+        void lineChanged(QTextBlock block);
 
 
     private slots:

@@ -41,6 +41,7 @@ namespace kgl {
     ///  dynamically link to this library and the usage of the
     ///  General Public License 3+ will be enforced.
     ///
+    #ifndef KGL_STATIC
     #   ifdef Q_CC_MSVC
     #       ifdef KGL_BUILD
     #           define KGL_API __declspec(dllexport)
@@ -54,6 +55,9 @@ namespace kgl {
     #           define KGL_API  ///< No visibility attribute
     #       endif
     #   endif
+    #else
+    #   define KGL_API
+    #endif
 }
 
 

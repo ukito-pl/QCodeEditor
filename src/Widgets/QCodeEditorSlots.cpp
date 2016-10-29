@@ -26,7 +26,6 @@
 #include <KGL/Widgets/QCodeEditor.hpp>
 #include <KGL/Widgets/QCodeEditorLineWidget.hpp>
 #include <QCompleter>
-#include <QTextBlock>
 
 
 namespace kgl {
@@ -85,6 +84,6 @@ namespace kgl {
     ///  @date      October 20th, 2016
     ///
     void QCodeEditor::textChanged() {
-        emit lineChanged(textCursor().blockNumber(), textCursor().block().text());
+        emit lineChanged(textCursor().block());
     }
 }

@@ -28,7 +28,6 @@
 #include <KGL/Widgets/QCodeEditorLineWidget.hpp>
 #include <KGL/Widgets/QCodeEditorHighlighter.hpp>
 #include <KGL/Design/QCodeEditorSheets.hpp>
-#include <QTextBlock>
 #include <QCompleter>
 
 
@@ -159,6 +158,7 @@ namespace kgl {
     void QCodeEditor::setRules(const QList<QSyntaxRule> &rules) {
         m_Rules = rules;
         m_Highlighter->updateFormats();
+        m_Highlighter->rehighlight();
     }
 
     ///

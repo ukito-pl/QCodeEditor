@@ -31,6 +31,7 @@
 #include <KGL/Design/QSyntaxRule.hpp>
 #include <KGL/Design/QCodeEditorDesign.hpp>
 #include <QSyntaxHighlighter>
+#include <QTextBlockUserData>
 #include <QTextDocument>
 #include <QObject>
 
@@ -41,6 +42,7 @@ namespace kgl {
     // Forward declarations
     //
     class QCodeEditor;
+    class QCodeEditorBlockData;
 
 
     ///
@@ -94,11 +96,28 @@ namespace kgl {
         ///  The signal will only fire if the rule containing the match
         ///  has a valid and unique string identifier (e.g <rule id="foo">)
         ///
-        ///  @param id The identifier of the sent match
+        ///  @param rule The rule that emitted this signal
         ///  @param sequence The matched sequence
-        ///  @param line Zero-based number of line
+        ///  @param block The current QTextBlock
         ///
-        void onMatch(const QString &id, QString sequence, qint32 line);
+        void onMatch(const QSyntaxRule &rule, QString sequence, QTextBlock block);
+
+        ///
+        ///  @fn    onHighlight : signal
+        ///  @brief Will fire if a line was highlighted.
+        ///
+        ///  Gives the possibility to add own highlighting logic afterwards.
+        ///
+        ///  @param highlighter Pointer to this highlighter instance
+        ///
+        void onHighlight(QCodeEditorHighlighter *highlighter);
+
+        ///
+        ///  @fn    onRemove : signal
+        ///  @brief Will fire if a line's highlighting was removed.
+        ///  @param data Data containing the UUID.
+        ///
+        void onRemove(QCodeEditorBlockData *data);
 
 
     protected:
@@ -120,6 +139,41 @@ namespace kgl {
         const QCodeEditorDesign *m_Design;
         const QCodeEditor *m_Parent;
         QList<QTextCharFormat> m_Formats;
+    };
+
+
+    ///
+    ///  @file      QCodeEditorHighlighter.hpp
+    ///  @author    Nicolas Kogler
+    ///  @date      October 29th, 2016
+    ///  @class     QCodeEditorBlockData
+    ///  @brief     Holds an unique identifier.
+    ///
+    class QCodeEditorBlockData : public QTextBlockUserData {
+    public:
+
+        ///  @brief Tries to create a unique QUuid
+        QCodeEditorBlockData(QString r) {
+            // Ensures that ID really is unique!
+            do {
+                id = QUuid::createUuid();
+            } while (p.contains(id));
+
+            p.push_back(id);
+            re = r;
+        }
+
+        ~QCodeEditorBlockData() {
+            p.removeOne(id);
+        }
+
+        QUuid id; ///< Unique identifier for each match
+        QString re; ///< Causing regular expression
+
+
+    private:
+
+        static QList<QUuid> p; ///< Holds all IDs to check uniqueness
     };
 }
 
