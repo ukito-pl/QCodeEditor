@@ -23,7 +23,6 @@
 #ifndef __KGL_QCODEEDITORSHEETS_HPP__
 #define __KGL_QCODEEDITORSHEETS_HPP__
 
-
 //
 //  Included headers
 //

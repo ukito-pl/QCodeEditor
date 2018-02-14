@@ -45,6 +45,7 @@ namespace kgl {
     class QCodeEditorLineWidget;
     class QCodeEditorHighlighter;
     class QCodeEditorPopup;
+    class QCodeEditorTextFinder;    /// MB
 
 
     ///
@@ -57,6 +58,8 @@ namespace kgl {
     class KGL_API QCodeEditor : public QPlainTextEdit {
     Q_OBJECT
     public:
+
+
 
         ///
         ///  @fn    Default constructor
@@ -197,6 +200,12 @@ namespace kgl {
         ///
         int lineColumnWidth() const;
 
+        ///
+        ///  @fn      showTextFinder
+        ///  @brief   Shows Find and Replace Dialog.
+        ///
+        void showTextFinder();
+
 
     protected:
 
@@ -313,7 +322,7 @@ namespace kgl {
         QSortFilterProxyModel *m_RuleFilter;    ///< Filters all the keywords, funcs, ...
         QCompleter *m_AutoComplete;             ///< Auto completion widget
         qint32 m_CompletionTrigger;             ///< Amount of characters till AC trigger
-
+        QCodeEditorTextFinder *textFinder;      ///< Find and replace text widget
 
         // Allow the line widget to access vars/funcs while rendering
         friend class QCodeEditorLineWidget;
