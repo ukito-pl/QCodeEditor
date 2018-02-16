@@ -86,7 +86,7 @@ namespace kgl {
         updateLineColumn(0);
 
         // Constructs textFinder widget
-        textFinder = new QCodeEditorTextFinder(this);
+        m_TextFinder = new QCodeEditorTextFinder(this);
 
         // Connects signals with slots
         connect(m_AutoComplete, SIGNAL(activated(QString)), this, SLOT(completeWord(QString)));
@@ -296,7 +296,12 @@ namespace kgl {
                     + pad.right();
     }
 
+    ///
+    ///  @fn        showTextFinder
+    ///  @author    Marek Bula
+    ///  @date      February 16th, 2018
+    ///
     void QCodeEditor::showTextFinder(){
-        textFinder->show();
+        m_TextFinder->show();
     }
 }
