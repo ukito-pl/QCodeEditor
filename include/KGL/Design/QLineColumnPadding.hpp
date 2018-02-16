@@ -23,6 +23,7 @@
 #ifndef __KGL_QLINECOLUMNPADDING_HPP__
 #define __KGL_QLINECOLUMNPADDING_HPP__
 
+
 //
 //  Included headers
 //
